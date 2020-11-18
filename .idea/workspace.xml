@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2c20d06a-0772-4bd9-b40e-cc3c29ab9301" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/proffpress.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +65,7 @@
       <workItem from="1605206885099" duration="14103000" />
       <workItem from="1605443868823" duration="12041000" />
       <workItem from="1605518367357" duration="16269000" />
-      <workItem from="1605632526896" duration="16705000" />
+      <workItem from="1605632526896" duration="16767000" />
     </task>
     <servers />
   </component>
