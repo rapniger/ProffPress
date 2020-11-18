@@ -1,0 +1,133 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12" style="margin: 10px 0px;">
+            <h2>Категории</h2>
+            <button class="btn btn-success" data-toggle="modal" data-target="#createModal">Добавить категорию</button>
+        </div>
+        <div class="col-12">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">
+                            Действия
+                        </th>
+                    </tr>
+                </thead>
+                <?php if(!empty($categorys)){?>
+                <tbody>
+                    <?php foreach($categorys as $category){?>
+                    <tr>
+                        <th scope="row"><?= $category->id?></th>
+                        <td><?= $category->name?></td>
+                        <td>
+                            <button class="btn btn-success  btn-sm" data-toggle="modal" data-target="#updateModal<?= $category->id?>">Обновить</button>
+                        </td>
+                    </tr>
+                    <?php }?>
+                </tbody>
+                <?php }?>
+                <?php if(empty($categorys)){?>
+                <tbody>
+                    <tr>
+                        <td><h2>Нет данных</h2></Td>
+                    </tr>
+                </tbody>
+                <?php }?>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Добавить категорию</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-form" method="post" action="">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm1">Наименование</span>
+                        </div>
+                        <input name="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button id="create-form-button"type="button" class="btn btn-success" data-dismiss="modal">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    jQuery(document).ready(function() {
+        var createForm = jQuery('#create-form');
+        jQuery('body').on('click', '#create-form-button', function(e) {
+            e.preventDefault();
+            jQuery.ajax({
+                type: "POST",
+                url: "/category/action/create.htm",
+                data: createForm.serialize(),
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+</script>
+<?php if(!empty($categorys)){?>
+    <?php foreach($categorys as $category){?>
+<div class="modal fade" id="updateModal<?= $category->id?>" tabindex="-1" aria-labelledby="editModalLabel-<?= $category-id?>" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel-<?= $category->id?>">Добавить категорию</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="update-form-<?= $category->id?>" method="post" action="">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm1-<?= $category->id?>">Наименование</span>
+                        </div>
+                        <input name="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1" value="<?= $category->name?>">
+                    </div>
+                    <input type="hidden" name="id" value="<?= $category->id?>">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button id="update-form-button-<?= $category->id?>" type="button" class="btn btn-success" data-dismiss="modal">Обновить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    jQuery(document).ready(function() {
+        var updateForm = jQuery('#update-form-<?= $category->id?>');
+        jQuery('body').on('click', '#update-form-button-<?= $category->id?>', function(e) {
+            e.preventDefault();
+            jQuery.ajax({
+                type: "POST",
+                url: "/category/action/update/<?= $category->id?>.htm",
+                data: updateForm.serialize(),
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+</script>
+    <?php }?>
+<?php }?>

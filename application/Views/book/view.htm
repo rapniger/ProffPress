@@ -1,0 +1,146 @@
+<?php
+//Создание записи
+?>
+<?php if(!empty($create)){?>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <h3 class="text-center">Создание записи</h3>
+            <form id="create-form" method="post">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm1">Наименование</span>
+                    </div>
+                    <input name="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm2">Cтоимость</span>
+                    </div>
+                    <input name="price" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm2">
+                </div>
+                <div id="select-options"></div>
+                <div class="input-group input-group-sm mb-3" style="margin-top: 10px;">
+                    <button id="create-form-button" type="button" class="btn btn-success">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const SelectOptions = [
+    <?php foreach($categorys as $category){?>
+        {
+            label: "<?= $category->name?>",
+            value: "<?= $category->id?>",
+        },
+    <?php }?>
+    ];
+    var instance = new SelectPure("#select-options", {
+        options: SelectOptions,
+        multiple: true // default: false
+    });
+</script>
+<script>
+    jQuery(document).ready(function() {
+        var createForm = jQuery('#create-form');
+        jQuery('body').on('click', '#create-form-button', function(e) {
+            e.preventDefault();
+            var DataForm = {};
+            var DataSelect = {};
+            var ElementSelect = jQuery('.select-pure__selected-label');
+            createForm.find('input').each(function () {
+                DataForm[this.name] = $(this).val();
+            })
+            ElementSelect.find('i[data-value]').each(function (e) {
+                DataSelect[e] = $(this).attr('data-value');
+            })
+            DataForm['category'] = DataSelect;
+            jQuery.ajax({
+                type: "POST",
+                url: "/book/action/create.htm",
+                data: DataForm,
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+</script>
+<?php }?>
+
+<?php
+//Обновление записи
+?>
+<?php
+if(!empty($update)){?>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <h3 class="text-center">Обновление записи</h3>
+            <form id="create-form" method="post">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm1">Наименование</span>
+                    </div>
+                    <input name="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1" value="<?= $book->name?>">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm2">Cтоимость</span>
+                    </div>
+                    <input name="price" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm2" value="<?= $book->price?>">
+                </div>
+                <input name="id" type="hidden" value="<?= $book->id?>">
+                <div id="select-options"></div>
+                <div class="input-group input-group-sm mb-3" style="margin-top: 10px;">
+                    <button id="create-form-button" type="button" class="btn btn-success">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const SelectOptions = [
+    <?php foreach($categorys as $category){?>
+        {
+            label: "<?= $category->name?>",
+                value: "<?= $category->id?>",
+        },
+    <?php }?>
+    ];
+    var instance = new SelectPure("#select-options", {
+        options: SelectOptions,
+        multiple: true // default: false
+    });
+</script>
+<script>
+    jQuery(document).ready(function() {
+        var createForm = jQuery('#create-form');
+        jQuery('body').on('click', '#create-form-button', function(e) {
+            e.preventDefault();
+            var DataForm = {};
+            var DataSelect = {};
+            var ElementSelect = jQuery('.select-pure__selected-label');
+            createForm.find('input').each(function () {
+                DataForm[this.name] = $(this).val();
+            })
+            ElementSelect.find('i[data-value]').each(function (e) {
+                DataSelect[e] = $(this).attr('data-value');
+            })
+            DataForm['category'] = DataSelect;
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/book/action/update/<?= $book->id?>.htm",
+                data: DataForm,
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+</script>
+<?php }?>

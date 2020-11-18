@@ -1,0 +1,17 @@
+{
+    "name": "rapniger/LifePHP",
+    "description": "LifePHP Framework",
+    "homepage": "https://github.com/rapniger/LifePHP",
+    "require": {
+        "psr/log": "~1.0",
+        "illuminate/database": "5.2.*",
+        "rakit/validation": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "LifePHP\\": "system/",
+            "Common\\": "common/",
+            "application\\": "application/"
+        }
+    }
+}

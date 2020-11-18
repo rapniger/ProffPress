@@ -1,0 +1,239 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12" style="margin: 10px 0px;">
+            <h2>Книги</h2>
+            <button class="btn btn-success" data-toggle="modal" data-target="#createModal">Добавить книгу</button>
+        </div>
+        <div class="col-12">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Стоимость</th>
+                        <th scope="col">Категория</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                </thead>
+                <?php //var_dump($categorys)?>
+                <?php if(!empty($books)){?>
+                <tbody>
+
+                    <?php foreach($books as $book){?>
+
+                    <tr>
+                        <th scope="row"><a href="/book/action/update/<?= $book->id?>.htm"><?= $book->id?></a></th>
+                        <td><a href="/book/action/update/<?= $book->id?>.htm"><?= $book->name?></a></td>
+                        <td><?= $book->price?> руб.</td>
+                        <td>
+                            <?php foreach($book->category as $CategoryBook){?>
+                                <?php if(!empty($categorys)){?>
+                                    <?php foreach($categorys as $category){?>
+                                        <?php if($CategoryBook == $category->id){?>
+                                            <?= $category->name?>;
+                                        <?php }?>
+                                    <?php }?>
+                                <?php }?>
+                            <?php }?>
+                        </td>
+                        <td>
+                            <button class="btn btn-success"   data-toggle="modal" data-target="#editModal-<?= $book->id?>" style="margin: 5px;">Обновить</button>
+                            <button class="btn btn-danger"  data-toggle="modal" data-target="#deleteModal-<?= $book->id?>"style="margin: 5px;">Удалить</button>
+                        </td>
+                    </tr>
+                    <?php }?>
+                <?php }?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Добавить категорию</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-form" method="post" action="">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm1">Наименование</span>
+                        </div>
+                        <input name="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1">
+                    </div>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm2">Стоимость</span>
+                        </div>
+                        <input name="price" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1">
+                    </div>
+                    <div id="select-options"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button id="create-form-button"type="button" class="btn btn-success" data-dismiss="modal">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const SelectOptions = [
+        <?php foreach($categorys as $category){?>
+        {
+            label: "<?= $category->name?>",
+            value: "<?= $category->id?>",
+        },
+        <?php }?>
+    ];
+    var instance = new SelectPure("#select-options", {
+        options: SelectOptions,
+        multiple: true // default: false
+    });
+</script>
+<script>
+    jQuery(document).ready(function() {
+        var createForm = jQuery('#create-form');
+
+        jQuery('body').on('click', '#create-form-button', function(e) {
+            e.preventDefault();
+            var DataForm = {};
+            var DataSelect = {};
+            var ElementSelect = jQuery('.select-pure__selected-label');
+            createForm.find('input').each(function () {
+                DataForm[this.name] = $(this).val();
+            })
+            ElementSelect.find('i[data-value]').each(function (e) {
+                DataSelect[e] = $(this).attr('data-value');
+            })
+            DataForm['category'] = DataSelect;
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/book/action/create.htm",
+                data: DataForm,
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+</script>
+<?php foreach($books as $book){?>
+<div class="modal fade" id="editModal-<?= $book->id?>" tabindex="-1" aria-labelledby="editModalLabel-<?= $book->id?>" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel-<?= $book->id?>">Редактировать</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="update-form-<?= $book->id?>" method="post" action="">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm1-<?= $book->id?>">Наименование</span>
+                        </div>
+                        <input name="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm1" value="<?= $book->name?>">
+                    </div>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm2-<?= $book->id?>">Стоимость</span>
+                        </div>
+                        <input name="price" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm2" value="<?= $book->price?>">
+                    </div>
+                    <div id="select-options-<?= $book->id?>"></div>
+                    <input name="id" type="hidden" value="<?= $book->id?>">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button id="update-form-button-<?= $book->id?>"type="button" class="btn btn-success" data-dismiss="modal">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal-<?= $book->id?>" tabindex="-1" aria-labelledby="deleteModalLabel-<?= $book->id?>" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel-<?= $book->id?>">Вы действительно хотите удалить?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="delete-form-<?= $book->id?>" method="post">
+                    <input type="hidden" name="id" value="<?= $book->id?>">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="delete-form-button-<?= $book->id?>" class="btn btn-secondary" data-dismiss="modal">Да</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">Нет</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var instance = new SelectPure("#select-options-<?= $book->id?>", {
+        options: SelectOptions,
+        multiple: true
+    });
+</script>
+<script>
+    jQuery(document).ready(function() {
+        var updateForm = jQuery('#update-form-<?= $book->id?>');
+
+        jQuery('body').on('click', '#update-form-button-<?= $book->id?>', function(e) {
+            e.preventDefault();
+            var DataForm = {};
+            var DataSelect = {};
+            var ElementSelect = jQuery('#update-form-<?= $book->id?> .select-pure__selected-label');
+            updateForm.find('input').each(function () {
+                DataForm[this.name] = $(this).val();
+            })
+            ElementSelect.find('i[data-value]').each(function (e) {
+                DataSelect[e] = $(this).attr('data-value');
+            })
+            DataForm['category'] = DataSelect;
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/book/action/update/<?= $book->id?>.htm",
+                data: DataForm,
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+    jQuery(document).ready(function() {
+        var deleteForm = jQuery('#delete-form-<?= $book->id?>');
+
+        jQuery('body').on('click', '#delete-form-button-<?= $book->id?>', function(e) {
+            e.preventDefault();
+            var DataForm = {};
+            deleteForm.find('input').each(function () {
+                DataForm[this.name] = $(this).val();
+            })
+            jQuery.ajax({
+                type: "POST",
+                url: "/book/action/delete/<?= $book->id?>.htm",
+                data: DataForm,
+                success: function(res) {
+                    location.reload();
+                }
+            })
+        })
+        return false;
+    });
+</script>
+<?php }?>
